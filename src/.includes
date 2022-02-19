@@ -1,0 +1,4 @@
+buildargs3=-lsfml-graphics -lsfml-window -lsfml-system -lclsocket -lX11
+files=./*.cpp Skyrmion/*.cpp
+
+testdir=../
