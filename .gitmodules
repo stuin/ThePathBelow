@@ -1,0 +1,3 @@
+[submodule "src/Skyrmion"]
+	path = src/Skyrmion
+	url = github.com:stuin/Skyrmion.git
