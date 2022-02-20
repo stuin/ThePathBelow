@@ -2,11 +2,10 @@
 
 #include "Skyrmion/GridMaker.h"
 
-enum TileType {
+enum CollisionType {
 	WALL,
 	SLOPE,
-	AIR,
-	WATER
+	AIR
 };
 
 enum CollisionLayer {
@@ -15,33 +14,53 @@ enum CollisionLayer {
 	BRIDGE,
 	UPPER,
 	INPUT,
-	TREE
+	TREES,
+	LIGHT
 };
 
 static const std::map<char, int> displayIndex = {
-	{'#', 0},
+	{'~', -1},
 	{' ', -1},
-	{'t', 6},
-	{'>', 5},
-	{'<', 5},
+	{'#', 0},
 	{'\\', 1},
 	{'/', 2},
-	{'.', 4},
-	{',', 5},
 	{'@', 3},
-	{'~', -1}
+	{'.', 4},
+	{'>', 5},
+	{'<', 5},
+	{',', 5},
+	{'t', 6},
+	{'T', 6},
+	{'!', 7}
 };
 
 static const std::map<char, int> collisionIndex = {
 	{'#', WALL},
 	{' ', WALL},
 	{'t', WALL},
-	{'>', WALL},
-	{'<', WALL},
-	{'\\', SLOPE},
-	{'/', SLOPE},
+	{'T', WALL},
 	{'.', AIR},
 	{',', AIR},
 	{'@', AIR},
-	{'~', WATER}
+	{'!', AIR}
+};
+
+static const std::map<char, int> lightIndex = {
+	{'#', -100},
+	{' ', -100},
+	{'@', -100},
+	{'T', -80},
+	{'t', 0},
+	{'\\', 0},
+	{'/', 0},
+	{'.', 0},
+	{',', 0},
+	{'!', 100}
+};
+
+static const std::map<char, int> treetopIndex = {
+	{' ', -1},
+	{'#', -1},
+	{'T', 0},
+	{'t', 0}
 };
