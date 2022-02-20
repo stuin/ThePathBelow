@@ -5,33 +5,40 @@
 enum CollisionType {
 	WALL,
 	SLOPE,
-	AIR
+	LOWERAIR,
+	BRIDGEAIR,
+	UPPERAIR,
+	TREASURE
 };
 
 enum CollisionLayer {
 	MAP,
-	LOWER,
-	BRIDGE,
-	UPPER,
+	LOWERPLAYER,
+	UPPERPLAYER,
 	INPUT,
 	TREES,
-	LIGHT
+	LIGHT,
+	TITLE
 };
 
 static const std::map<char, int> displayIndex = {
-	{'~', -1},
 	{' ', -1},
-	{'#', 0},
-	{'\\', 1},
-	{'/', 2},
-	{'@', 3},
-	{'.', 4},
-	{'>', 5},
-	{'<', 5},
-	{',', 5},
-	{'t', 6},
-	{'T', 6},
-	{'!', 7}
+	{'\\',0},
+	{'_', 1},
+	{'+', 2},
+	{'#', 3},
+	{',', 4},
+	{'.', 5},
+	{'|', 6},
+	{'@', 7},
+	{'H', 8},
+	{'T', 9},
+	{'t', 10},
+	{'-', 11},
+	{'!', 12},
+	{'[', 13},
+	{']', 14},
+	{'=', 15}
 };
 
 static const std::map<char, int> collisionIndex = {
@@ -39,10 +46,19 @@ static const std::map<char, int> collisionIndex = {
 	{' ', WALL},
 	{'t', WALL},
 	{'T', WALL},
-	{'.', AIR},
-	{',', AIR},
-	{'@', AIR},
-	{'!', AIR}
+	{',', UPPERAIR},
+	{'!', UPPERAIR},
+	{']', UPPERAIR},
+	{'-', UPPERAIR},
+	{'_', SLOPE},
+	{'\\',SLOPE},
+	{'+', SLOPE},
+	{'|', SLOPE},
+	{'.', LOWERAIR},
+	{'=', BRIDGEAIR},
+	{'[', BRIDGEAIR},
+	{'@', BRIDGEAIR},
+	{'H', TREASURE}
 };
 
 static const std::map<char, int> lightIndex = {
@@ -51,10 +67,17 @@ static const std::map<char, int> lightIndex = {
 	{'@', -100},
 	{'T', -80},
 	{'t', 0},
-	{'\\', 0},
-	{'/', 0},
-	{'.', 0},
+	{'H', 0},
 	{',', 0},
+	{'.', 0},
+	{']', 0},
+	{'[', 0},
+	{'=', 0},
+	{'_', 0},
+	{'-', 0},
+	{'\\',0},
+	{'+', 0},
+	{'|', 0},
 	{'!', 100}
 };
 

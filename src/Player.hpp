@@ -11,6 +11,11 @@ class Player : public Node {
 	bool upper;
 	InputHandler input;
 	Indexer collisionMap;
+	Player *otherPlayer;
+
+	//End screen stuff
+	sf::Texture endTexture;
+	Node endNode;
 
 	//Dynamic Lighting
 	LightMap *lightMap = NULL;
@@ -18,10 +23,15 @@ class Player : public Node {
 	
 
 public:
-	Player(bool _upper, Indexer _collisionMap) : 
-		Node(_upper ? UPPER : LOWER), input(controlLayouts[_upper ? 1 : 2], INPUT, this), collisionMap(_collisionMap) {
+	int treasure = 0;
+	bool endShown = false;
+
+	Player(bool _upper, Indexer _collisionMap, Player *_otherPlayer=NULL) : 
+		Node(_upper ? UPPERPLAYER : LOWERPLAYER), input(controlLayouts[_upper ? 1 : 2], INPUT, this), 
+		collisionMap(_collisionMap), endNode(TITLE, sf::Vector2i(64, 32), false, this) {
 
 		upper = _upper;
+		otherPlayer = _otherPlayer;
 	}
 
 	void setupLighting(LightMap *_lightMap, LightMapCollection *_lightCollection) {
@@ -36,14 +46,33 @@ public:
 		int targetType = collisionMap.getTile(target);
 
 		//Move player
-		if(targetType == AIR) {
-			sf::Vector2f light = scalePosition(target);
-			if(lightMap != NULL && light != scalePosition(getGPosition())) {
-				lightMap->moveSource(0, light);
-				lightMap->reload();
+		if(!endShown) {
+			if(targetType == (upper ? UPPERAIR : LOWERAIR) || targetType == BRIDGEAIR) {
+				sf::Vector2f light = scalePosition(target);
+				if(lightMap != NULL && light != scalePosition(getGPosition())) {
+					lightMap->moveSource(0, light);
+					lightMap->reload();
+				}
+
+				setPosition(target);
 			}
 
-			setPosition(target);
+			//Check for win condition
+			if(getPosition().y < 30 && otherPlayer != NULL && otherPlayer->getPosition().y < 30) {
+				//Load the end texture
+				std::string endFile = "res/endscreen.png";
+				if(!endTexture.loadFromFile(endFile))
+					throw std::invalid_argument("Player texture " + endFile + " not found");
+				endNode.setTexture(endTexture);
+				endNode.setPosition(0, -48);
+				UpdateList::addNode(&endNode);
+
+				std::cout << "YOU WIN!!\n";
+				//std::cout << treasure + otherPlayer->treasure << " Treasure chests collected!\n";
+				
+				endShown = true;
+				otherPlayer->endShown = true;
+			}
 		}
 	}
 

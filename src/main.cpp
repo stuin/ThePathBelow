@@ -8,7 +8,7 @@
 
 int main() {
 	//Load base tile maps
-	GridMaker grid("res/full_map.txt", 21, 11);
+	GridMaker grid("res/full_map.txt", 33, 28);
 	TileMap forest("res/foresttiles.png", 16, 16, Indexer(&grid, displayIndex, 0), MAP);
 	Indexer collisionMap(&grid, collisionIndex, WALL, 16, 16);
 	Indexer treetopMap(&grid, treetopIndex, -1);
@@ -45,14 +45,14 @@ int main() {
 
 	//Upper area player
 	Player upperPlayer(true, collisionMap);
-	upperPlayer.setPosition(sf::Vector2f(200, 56));
+	upperPlayer.setPosition(sf::Vector2f(440, 312));
 	upperPlayer.setTexture(upperTexture);
 	upperPlayer.setupLighting(&movingLights, &lighting);
 	UpdateList::addNode(&upperPlayer);
 
 	//Lower area player
-	Player lowerPlayer(false, collisionMap);
-	lowerPlayer.setPosition(sf::Vector2f(120, 56));
+	Player lowerPlayer(false, collisionMap, &upperPlayer);
+	lowerPlayer.setPosition(sf::Vector2f(392, 312));
 	lowerPlayer.setTexture(lowerTexture);
 	UpdateList::addNode(&lowerPlayer);
 
@@ -61,8 +61,8 @@ int main() {
 	UpdateList::alwaysLoadLayer(TREES);
 	UpdateList::alwaysLoadLayer(INPUT);
 	UpdateList::alwaysLoadLayer(LIGHT);
-	UpdateList::setCamera(&lowerPlayer, sf::Vector2f(300, 200));
+	UpdateList::setCamera(&lowerPlayer, sf::Vector2f(450, 250));
 
-	UpdateList::startEngine("The Path Below", LIGHT);
+	UpdateList::startEngine("The Path Below", TITLE);
 	return 0;
 }
