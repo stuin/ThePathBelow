@@ -14,6 +14,7 @@ enum CollisionType {
 enum CollisionLayer {
 	MAP,
 	LOWERPLAYER,
+	BRIDGELAYER,
 	UPPERPLAYER,
 	INPUT,
 	TREES,
@@ -25,20 +26,20 @@ static const std::map<char, int> displayIndex = {
 	{' ', -1},
 	{'\\',0},
 	{'_', 1},
+	{'-', 1},
 	{'+', 2},
 	{'#', 3},
 	{',', 4},
 	{'.', 5},
+	{'=', 5},
+	{'[', 5},
 	{'|', 6},
+	{']', 6},
 	{'@', 7},
 	{'H', 8},
-	{'T', 9},
-	{'t', 10},
-	{'-', 11},
-	{'!', 12},
-	{'[', 13},
-	{']', 14},
-	{'=', 15}
+	{'!', 9},
+	{'T', 10},
+	{'t', 11}
 };
 
 static const std::map<char, int> collisionIndex = {
@@ -86,4 +87,13 @@ static const std::map<char, int> treetopIndex = {
 	{'#', -1},
 	{'T', 0},
 	{'t', 0}
+};
+
+static const std::map<char, int> bridgeIndex = {
+	{' ', -1},
+	{'#', -1},
+	{'[', 0},
+	{']', 1},
+	{'=', 2},
+	{'-', 3}
 };

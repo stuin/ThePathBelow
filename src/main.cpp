@@ -14,6 +14,10 @@ int main() {
 	Indexer treetopMap(&grid, treetopIndex, -1);
 	UpdateList::addNode(&forest);
 
+	//Add overlapping bridges
+	TileMap bridges("res/bridge.png", 16, 16, Indexer(&grid, bridgeIndex, -1), BRIDGELAYER);
+	UpdateList::addNode(&bridges);
+
 	//Add overlapping tree middles
 	TileMap treemid("res/treemid.png", 16, 16, treetopMap, TREES);
 	treemid.setPosition(0, -6);

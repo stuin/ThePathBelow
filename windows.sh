@@ -8,3 +8,7 @@ cmd="x86_64-w64-mingw32-g++ $files -o $output.exe $options $libs"
 
 echo $cmd
 $cmd
+
+echo "Done, Creating zip"
+zip -r ThePathBelow.zip ThePathBelow.* res/
+
