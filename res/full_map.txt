@@ -1,6 +1,6 @@
 ################################
 #######@#####@##################
-tttt.....|!,,,,TT#########.H.,##
+tttt.....|!,,,,TT#########.h.,##
 ttt......|,,,,,TTT########...!##
 ttt..tTTTTT,,TTT,,,,H#####...,##
 ttt..tT,,,,,,,TT,TT########.###
@@ -8,7 +8,7 @@ ttt...\___+TT,TT,T#########.###
 ttt.......|T,,,,,TTT#######.###
 ttt.ttttt.|,,TTT,TTTTT#####.###
 ttt..tttt.\__+TT,,TTTT#####.###
-tttH.......tt|TTT,TTTT#####.###
+ttth.......tt|TTT,TTTT#####.###
 ttttttttt.ttt|TTT,TTTT#####.###
 ttttTTTtt.ttt|TT,,TTTT#####.###
 ttTTTTTT...|!,,,,TTTTTTT#...###

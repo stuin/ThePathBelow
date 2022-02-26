@@ -27,11 +27,13 @@ public:
 	bool endShown = false;
 
 	Player(bool _upper, Indexer _collisionMap, Player *_otherPlayer=NULL) : 
-		Node(_upper ? UPPERPLAYER : LOWERPLAYER), input(controlLayouts[_upper ? 1 : 2], INPUT, this), 
+		Node(_upper ? UPPERPLAYER : LOWERPLAYER), input(controlLayouts[_upper ? 1 : 0], INPUT, this), 
 		collisionMap(_collisionMap), endNode(TITLE, sf::Vector2i(64, 32), false, this) {
 
 		upper = _upper;
 		otherPlayer = _otherPlayer;
+
+		collideWith(TREASURE);
 	}
 
 	void setupLighting(LightMap *_lightMap, LightMapCollection *_lightCollection) {
@@ -68,12 +70,17 @@ public:
 				UpdateList::addNode(&endNode);
 
 				std::cout << "YOU WIN!!\n";
-				//std::cout << treasure + otherPlayer->treasure << " Treasure chests collected!\n";
+				std::cout << treasure + otherPlayer->treasure << " Treasure chests collected!\n";
 				
 				endShown = true;
 				otherPlayer->endShown = true;
 			}
 		}
+	}
+
+	void collide(Node *object) {
+		treasure++;
+		object->setDelete();
 	}
 
 	sf::Vector2f scalePosition(sf::Vector2f pos) {

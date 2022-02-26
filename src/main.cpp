@@ -8,7 +8,7 @@
 
 int main() {
 	//Load base tile maps
-	GridMaker grid("res/full_map.txt", 33, 28);
+	GridMaker grid("res/full_map.txt");
 	TileMap forest("res/foresttiles.png", 16, 16, Indexer(&grid, displayIndex, 0), MAP);
 	Indexer collisionMap(&grid, collisionIndex, WALL, 16, 16);
 	Indexer treetopMap(&grid, treetopIndex, -1);
@@ -37,15 +37,19 @@ int main() {
 	lighting.addLightMap(&movingLights);
 	UpdateList::addNode(&lighting);
 
-	//Load the player textures
+	//Load node textures
 	std::string upperFile = "res/upperplayer.png";
 	std::string lowerFile = "res/lowerplayer.png";
+	std::string treasureFile = "res/treasure.png";
 	sf::Texture upperTexture;
 	sf::Texture lowerTexture;
+	sf::Texture treasureTexture;
 	if(!upperTexture.loadFromFile(upperFile))
 		throw std::invalid_argument("Player texture " + upperFile + " not found");
 	if(!lowerTexture.loadFromFile(lowerFile))
 		throw std::invalid_argument("Player texture " + lowerFile + " not found");
+	if(!treasureTexture.loadFromFile(treasureFile))
+		throw std::invalid_argument("Treasure texture " + treasureFile + " not found");
 
 	//Upper area player
 	Player upperPlayer(true, collisionMap);
@@ -59,6 +63,16 @@ int main() {
 	lowerPlayer.setPosition(sf::Vector2f(392, 312));
 	lowerPlayer.setTexture(lowerTexture);
 	UpdateList::addNode(&lowerPlayer);
+
+	//Place Treasure chests
+	collisionMap.mapGrid([&treasureTexture](char c, sf::Vector2f pos) {
+		if(c == 'H' || c == 'h') {
+			Node *t = new Node(TREASURE, sf::Vector2i(10, 9));
+			t->setTexture(treasureTexture);
+			t->setPosition(pos + sf::Vector2f(8, 8));
+			UpdateList::addNode(t);
+		}
+	});
 
 	//Finish engine setup
 	UpdateList::alwaysLoadLayer(MAP);
