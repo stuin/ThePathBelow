@@ -9,7 +9,7 @@ sf::Keyboard::Key controlLayouts[3][4] = {
 
 class Player : public Node {
 	bool upper;
-	InputHandler input;
+	DirectionHandler input;
 	Indexer collisionMap;
 	Player *otherPlayer;
 

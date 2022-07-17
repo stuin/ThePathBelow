@@ -7,24 +7,34 @@
 #include "Player.hpp"
 
 int main() {
+	//Load tilemap textures
+	sf::Texture forestTexture;
+	sf::Texture bridgeTexture;
+	sf::Texture treemidTexture;
+	sf::Texture treetopTexture;
+	UpdateList::loadTexture(&forestTexture, "res/foresttiles.png");
+	UpdateList::loadTexture(&bridgeTexture, "res/bridge.png");
+	UpdateList::loadTexture(&treemidTexture, "res/treemid.png");
+	UpdateList::loadTexture(&treetopTexture, "res/treetop.png");
+
 	//Load base tile maps
 	GridMaker grid("res/full_map.txt");
-	TileMap forest("res/foresttiles.png", 16, 16, Indexer(&grid, displayIndex, 0), MAP);
+	TileMap forest(&forestTexture, 16, 16, new Indexer(&grid, displayIndex, 0), MAP);
 	Indexer collisionMap(&grid, collisionIndex, WALL, 16, 16);
 	Indexer treetopMap(&grid, treetopIndex, -1);
 	UpdateList::addNode(&forest);
 
 	//Add overlapping bridges
-	TileMap bridges("res/bridge.png", 16, 16, Indexer(&grid, bridgeIndex, -1), BRIDGELAYER);
+	TileMap bridges(&bridgeTexture, 16, 16, new Indexer(&grid, bridgeIndex, -1), BRIDGELAYER);
 	UpdateList::addNode(&bridges);
 
 	//Add overlapping tree middles
-	TileMap treemid("res/treemid.png", 16, 16, treetopMap, TREES);
+	TileMap treemid(&treemidTexture, 16, 16, &treetopMap, TREES);
 	treemid.setPosition(0, -6);
 	UpdateList::addNode(&treemid);
 
 	//Add overlapping tree tops
-	TileMap treetop("res/treetop.png", 16, 16, treetopMap, TREES);
+	TileMap treetop(&treetopTexture, 16, 16, &treetopMap, TREES);
 	treetop.setPosition(0, -22);
 	UpdateList::addNode(&treetop);
 
@@ -38,18 +48,12 @@ int main() {
 	UpdateList::addNode(&lighting);
 
 	//Load node textures
-	std::string upperFile = "res/upperplayer.png";
-	std::string lowerFile = "res/lowerplayer.png";
-	std::string treasureFile = "res/treasure.png";
 	sf::Texture upperTexture;
 	sf::Texture lowerTexture;
 	sf::Texture treasureTexture;
-	if(!upperTexture.loadFromFile(upperFile))
-		throw std::invalid_argument("Player texture " + upperFile + " not found");
-	if(!lowerTexture.loadFromFile(lowerFile))
-		throw std::invalid_argument("Player texture " + lowerFile + " not found");
-	if(!treasureTexture.loadFromFile(treasureFile))
-		throw std::invalid_argument("Treasure texture " + treasureFile + " not found");
+	UpdateList::loadTexture(&upperTexture, "res/upperplayer.png");
+	UpdateList::loadTexture(&lowerTexture, "res/lowerplayer.png");
+	UpdateList::loadTexture(&treasureTexture, "res/treasure.png");
 
 	//Upper area player
 	Player upperPlayer(true, collisionMap);
@@ -75,10 +79,10 @@ int main() {
 	});
 
 	//Finish engine setup
-	UpdateList::alwaysLoadLayer(MAP);
-	UpdateList::alwaysLoadLayer(TREES);
-	UpdateList::alwaysLoadLayer(INPUT);
-	UpdateList::alwaysLoadLayer(LIGHT);
+	UpdateList::staticLayer(MAP);
+	UpdateList::staticLayer(TREES);
+	UpdateList::staticLayer(INPUT);
+	UpdateList::staticLayer(LIGHT);
 	UpdateList::setCamera(&lowerPlayer, sf::Vector2f(450, 250));
 
 	UpdateList::startEngine("The Path Below", TITLE);
