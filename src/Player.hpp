@@ -1,11 +1,4 @@
-#include "Skyrmion/InputHandler.hpp"
 #include "Skyrmion/TileMap.hpp"
-
-sf::Keyboard::Key controlLayouts[3][4] = {
-	{sf::Keyboard::W, sf::Keyboard::S, sf::Keyboard::A, sf::Keyboard::D},
-	{sf::Keyboard::Up, sf::Keyboard::Down, sf::Keyboard::Left, sf::Keyboard::Right},
-	{sf::Keyboard::W, sf::Keyboard::R, sf::Keyboard::A, sf::Keyboard::S}
-};
 
 class Player : public Node {
 	bool upper;
@@ -20,14 +13,14 @@ class Player : public Node {
 	//Dynamic Lighting
 	LightMap *lightMap = NULL;
 	LightMapCollection *lightCollection = NULL;
-	
 
 public:
 	int treasure = 0;
 	bool endShown = false;
 
 	Player(bool _upper, Indexer _collisionMap, Player *_otherPlayer=NULL) : 
-		Node(_upper ? UPPERPLAYER : LOWERPLAYER), input(controlLayouts[_upper ? 1 : 0], INPUT, this), 
+		Node(_upper ? UPPERPLAYER : LOWERPLAYER), 
+		input(_upper ? "/upper" : "/lower", INPUT, this), 
 		collisionMap(_collisionMap), endNode(TITLE, sf::Vector2i(64, 32), false, this) {
 
 		upper = _upper;

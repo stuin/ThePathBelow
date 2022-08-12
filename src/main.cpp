@@ -3,10 +3,14 @@
 #include <SFML/Graphics.hpp>
 
 #include "Skyrmion/LightMap.h"
+#include "Skyrmion/InputHandler.hpp"
 #include "indexes.h"
 #include "Player.hpp"
 
 int main() {
+	//Load settings file
+	Settings::loadSettings("res/settings.json");
+
 	//Load tilemap textures
 	sf::Texture forestTexture;
 	sf::Texture bridgeTexture;
