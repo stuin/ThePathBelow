@@ -37,7 +37,7 @@ public:
 	}
 
 	void update(double time) {
-		sf::Vector2f target = input.getMovement(this, time * 32);
+		sf::Vector2f target = getPosition() + input.getMovement(time * 32);
 		int targetType = collisionMap.getTile(target);
 
 		//Move player

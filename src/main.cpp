@@ -3,7 +3,7 @@
 #include <SFML/Graphics.hpp>
 
 #include "Skyrmion/LightMap.h"
-#include "Skyrmion/InputHandler.hpp"
+#include "Skyrmion/InputHandler.h"
 #include "indexes.h"
 #include "Player.hpp"
 
