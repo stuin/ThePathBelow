@@ -2,14 +2,6 @@
 
 #include "Skyrmion/GridMaker.h"
 
-enum CollisionType {
-	WALL,
-	SLOPE,
-	LOWERAIR,
-	BRIDGEAIR,
-	UPPERAIR
-};
-
 enum CollisionLayer {
 	MAP,
 	TREASURE,
@@ -43,25 +35,46 @@ static const std::map<char, int> displayIndex = {
 	{'t', 10}
 };
 
-static const std::map<char, int> collisionIndex = {
-	{'#', WALL},
-	{' ', WALL},
-	{'t', WALL},
-	{'T', WALL},
-	{',', UPPERAIR},
-	{'H', UPPERAIR},
-	{'!', UPPERAIR},
-	{']', UPPERAIR},
-	{'-', UPPERAIR},
-	{'_', SLOPE},
-	{'\\',SLOPE},
-	{'+', SLOPE},
-	{'|', SLOPE},
-	{'.', LOWERAIR},
-	{'h', LOWERAIR},
-	{'=', BRIDGEAIR},
-	{'[', BRIDGEAIR},
-	{'@', BRIDGEAIR}
+static const std::map<char, int> upperCollisionIndex = {
+	{'#', 0},
+	{' ', 0},
+	{'t', 0},
+	{'T', 0},
+	{'_', 0},
+	{'\\',0},
+	{'+', 0},
+	{'|', 0},
+	{',', 1},
+	{'H', 1},
+	{'!', 1},
+	{']', 1},
+	{'-', 1},
+	{'.', 0},
+	{'h', 0},
+	{'=', 1},
+	{'[', 1},
+	{'@', 1}
+};
+
+static const std::map<char, int> lowerCollisionIndex = {
+	{'#', 0},
+	{' ', 0},
+	{'t', 0},
+	{'T', 0},
+	{'_', 0},
+	{'\\',0},
+	{'+', 0},
+	{'|', 0},
+	{',', 0},
+	{'H', 0},
+	{'!', 0},
+	{']', 0},
+	{'-', 0},
+	{'.', 1},
+	{'h', 1},
+	{'=', 1},
+	{'[', 1},
+	{'@', 1}
 };
 
 static const std::map<char, int> lightIndex = {

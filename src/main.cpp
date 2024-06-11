@@ -24,7 +24,8 @@ int main() {
 	//Load base tile maps
 	GridMaker grid("res/full_map.txt");
 	TileMap forest(&forestTexture, 16, 16, new Indexer(&grid, displayIndex, 0), MAP);
-	Indexer collisionMap(&grid, collisionIndex, WALL, 16, 16);
+	Indexer upperCollisionMap(&grid, upperCollisionIndex, 0, 16, 16);
+	Indexer lowerCollisionMap(&grid, lowerCollisionIndex, 0, 16, 16);
 	Indexer treetopMap(&grid, treetopIndex, -1);
 	UpdateList::addNode(&forest);
 
@@ -60,20 +61,20 @@ int main() {
 	UpdateList::loadTexture(&treasureTexture, "res/treasure.png");
 
 	//Upper area player
-	Player upperPlayer(true, collisionMap);
+	Player upperPlayer(true, upperCollisionMap);
 	upperPlayer.setPosition(sf::Vector2f(440, 312));
 	upperPlayer.setTexture(upperTexture);
 	upperPlayer.setupLighting(&movingLights, &lighting);
 	UpdateList::addNode(&upperPlayer);
 
 	//Lower area player
-	Player lowerPlayer(false, collisionMap, &upperPlayer);
+	Player lowerPlayer(false, lowerCollisionMap, &upperPlayer);
 	lowerPlayer.setPosition(sf::Vector2f(392, 312));
 	lowerPlayer.setTexture(lowerTexture);
 	UpdateList::addNode(&lowerPlayer);
 
 	//Place Treasure chests
-	collisionMap.mapGrid([&treasureTexture](char c, sf::Vector2f pos) {
+	upperCollisionMap.mapGrid([&treasureTexture](char c, sf::Vector2f pos) {
 		if(c == 'H' || c == 'h') {
 			Node *t = new Node(TREASURE, sf::Vector2i(10, 9));
 			t->setTexture(treasureTexture);
@@ -89,6 +90,6 @@ int main() {
 	UpdateList::staticLayer(LIGHT);
 	UpdateList::setCamera(&lowerPlayer, sf::Vector2f(450, 250));
 
-	UpdateList::startEngine("The Path Below", TITLE);
+	UpdateList::startEngine("The Path Below");
 	return 0;
 }

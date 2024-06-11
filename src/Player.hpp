@@ -32,24 +32,23 @@ public:
 	void setupLighting(LightMap *_lightMap, LightMapCollection *_lightCollection) {
 		lightMap = _lightMap;
 		lightCollection = _lightCollection;
-		lightMap->addSource(scalePosition(getGPosition()), 1);
+		lightMap->addSource(getGPosition(), 1);
 		lightMap->reload();
 	}
 
 	void update(double time) {
-		sf::Vector2f target = getPosition() + input.getMovement(time * 32);
-		int targetType = collisionMap.getTile(target);
+		sf::Vector2f prevPosition = getPosition();
+		sf::Vector2f target = move(input.getDirection(), &collisionMap, time * 32);
 
 		//Move player
 		if(!endShown) {
-			if(targetType == (upper ? UPPERAIR : LOWERAIR) || targetType == BRIDGEAIR) {
-				sf::Vector2f light = scalePosition(target);
-				if(lightMap != NULL && light != scalePosition(getGPosition())) {
+			if(lightMap != NULL) {
+				sf::Vector2f light = target;
+				//lightMap->setPosition(remainderPosition(target));
+				if(light != prevPosition) {
 					lightMap->moveSource(0, light);
 					lightMap->reload();
 				}
-
-				setPosition(target);
 			}
 
 			//Check for win condition
@@ -76,7 +75,7 @@ public:
 		object->setDelete();
 	}
 
-	sf::Vector2f scalePosition(sf::Vector2f pos) {
-		return sf::Vector2f((int)(pos.x / 8) + 1, (int)(pos.y / 8) + 1);
+	sf::Vector2f remainderPosition(sf::Vector2f pos) {
+		return sf::Vector2f((int)(pos.x) % 8, (int)(pos.y) % 8);
 	}
 };
