@@ -1,9 +1,9 @@
 {
 	"lower": {
 		"up": "W",
-		"down": "R",
+		"down": "S",
 		"left": "A",
-		"right": "S"
+		"right": "D"
 	},
 	"upper": {
 		"up": "Up",
@@ -13,4 +13,5 @@
 	},
 	"lighting_scale": 2,
 	"lighting_scale_desc": "One of [1,2,4,8], default = 2, lower = better performance"
+
 }

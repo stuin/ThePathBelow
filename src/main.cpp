@@ -44,10 +44,11 @@ int main() {
 	UpdateList::addNode(&treetop);
 
 	//Setup Light maps
-	Indexer lightMap(&grid, lightIndex, 0, 2, 2);
-	LightMapCollection lighting(8, 8, lightMap, LIGHT);
-	LightMap staticLights(8, 8, 0, 0.1, lightMap, LIGHT, true);
-	LightMap movingLights(8, 8, 0, 0.1, lightMap, LIGHT, false);
+	int lightScale = Settings::getInt("/lighting_scale");
+	Indexer lightMap(&grid, lightIndex, 0, lightScale, lightScale);
+	LightMapCollection lighting(16, 16, lightMap, LIGHT);
+	LightMap staticLights(16, 16, 0, 0.2, lightMap, LIGHT, true);
+	LightMap movingLights(16, 16, 0, 0.2, lightMap, LIGHT, false);
 	lighting.addLightMap(&staticLights);
 	lighting.addLightMap(&movingLights);
 	UpdateList::addNode(&lighting);

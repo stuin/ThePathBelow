@@ -15,5 +15,7 @@ echo $linux_cmd
 $linux_cmd
 
 echo "Done, Creating zip"
+cp res/default_settings.json res/settings.json
 zip -r "$output.zip" "$output.*" res/
+cp res/dev_settings.json res/settings.json
 
