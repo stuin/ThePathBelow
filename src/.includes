@@ -1,4 +1,11 @@
-buildargs3=-lsfml-graphics -lsfml-window -lsfml-system -lX11
-files=./*.cpp Skyrmion/*.cpp
+buildargs1=-Wno-unused-function -DBACKWARD_HAS_BFD=1
+
+#raylib
+files=./*.cpp Skyrmion/*/*.cpp Skyrmion/core/backend/RaylibUpdateList.cpp Skyrmion/core/backend/nbnetClient.cpp Skyrmion/include/imgui/*.cpp Skyrmion/include/backward-cpp/backward.cpp Skyrmion/include/rlImGui/rlImGui.cpp
+buildargs3=-lnoise -lraylib -lGL -lm -lpthread -ldl -lrt -lX11 -lbfd -ldl
+
+#sokol
+#files=./*.cpp Skyrmion/*/*.cpp Skyrmion/core/backend/SokolUpdateList.cpp Skyrmion/core/backend/nbnetClient.cpp Skyrmion/core/backend/SokolAudio.cpp Skyrmion/include/imgui/*.cpp Skyrmion/include/backward-cpp/backward.cpp
+#buildargs3=-lGL -ldl -lm -lglfw -lX11 -lasound -lXi -lXcursor -lnoise -lbfd -ldl
 
 testdir=../

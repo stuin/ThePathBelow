@@ -1,20 +1,51 @@
 #pragma once
 
-#include "Skyrmion/GridMaker.h"
+#include "Skyrmion/tiling/GridMaker.h"
+#include "Skyrmion/input/MovementEnums.h"
 
-enum CollisionLayer {
-	MAP,
-	TREASURE,
-	LOWERPLAYER,
-	BRIDGELAYER,
-	UPPERPLAYER,
-	INPUT,
-	TREES,
-	LIGHT,
-	TITLE
+#define LAYER_FOREACH(E) \
+    E(MAP) \
+    E(TREASURE) \
+    E(LOWERPLAYER) \
+    E(BRIDGELAYER) \
+    E(UPPERPLAYER) \
+	E(TREES) \
+	E(INPUT) \
+	E(GRIDEDITOR) \
+	E(LIGHTBUFFERS) \
+	E(LIGHT) \
+	E(TITLE) \
+
+NAMED_ENUM(LAYER)
+
+enum TEXTURES {
+	TEXTURE_INVALID,
+	TEXTURE_FOREST,
+	TEXTURE_BRIDGE,
+	TEXTURE_TREE_MID,
+	TEXTURE_TREE_TOP,
+	TEXTURE_TREASURE,
+	TEXTURE_PLAYER_UPPER,
+	TEXTURE_PLAYER_LOWER,
+	TEXTURE_LIGHT,
+	TEXTURE_END,
+	TEXTURE_FONT
+};
+static std::vector<std::string> TEXTURE_FILES = {
+	"#INVALID",
+	"res/foresttiles.png",
+	"res/bridge.png",
+	"res/treemid.png",
+	"res/treetop.png",
+	"res/treasure.png",
+	"res/upperplayer.png",
+	"res/lowerplayer.png",
+	"res/debug/heatmapG.png",
+	"res/endscreen.png",
+	"res/small_pixel.ttf"
 };
 
-static const std::map<char, int> displayIndex = {
+static const std::map<int, int> displayIndex = {
 	{' ', -1},
 	{'\\',0},
 	{'_', 1},
@@ -35,49 +66,49 @@ static const std::map<char, int> displayIndex = {
 	{'t', 10}
 };
 
-static const std::map<char, int> upperCollisionIndex = {
-	{'#', 0},
-	{' ', 0},
-	{'t', 0},
-	{'T', 0},
-	{'_', 0},
-	{'\\',0},
-	{'+', 0},
-	{'|', 0},
-	{',', 1},
-	{'H', 1},
-	{'!', 1},
-	{']', 1},
-	{'-', 1},
-	{'.', 0},
-	{'h', 0},
-	{'=', 1},
-	{'[', 1},
-	{'@', 1}
+static const std::map<int, int> upperCollisionIndex = {
+	{'#', FULL},
+	{' ', FULL},
+	{'t', FULL},
+	{'T', FULL},
+	{'_', FULL},
+	{'\\',FULL},
+	{'+', FULL},
+	{'|', FULL},
+	{',', EMPTY},
+	{'H', EMPTY},
+	{'!', EMPTY},
+	{']', EMPTY},
+	{'-', EMPTY},
+	{'.', FULL},
+	{'h', FULL},
+	{'=', EMPTY},
+	{'[', EMPTY},
+	{'@', EMPTY}
 };
 
-static const std::map<char, int> lowerCollisionIndex = {
-	{'#', 0},
-	{' ', 0},
-	{'t', 0},
-	{'T', 0},
-	{'_', 0},
-	{'\\',0},
-	{'+', 0},
-	{'|', 0},
-	{',', 0},
-	{'H', 0},
-	{'!', 0},
-	{']', 0},
-	{'-', 0},
-	{'.', 1},
-	{'h', 1},
-	{'=', 1},
-	{'[', 1},
-	{'@', 1}
+static const std::map<int, int> lowerCollisionIndex = {
+	{'#', FULL},
+	{' ', FULL},
+	{'t', FULL},
+	{'T', FULL},
+	{'_', FULL},
+	{'\\',FULL},
+	{'+', FULL},
+	{'|', FULL},
+	{',', FULL},
+	{'H', FULL},
+	{'!', FULL},
+	{']', FULL},
+	{'-', FULL},
+	{'.', EMPTY},
+	{'h', EMPTY},
+	{'=', EMPTY},
+	{'[', EMPTY},
+	{'@', EMPTY}
 };
 
-static const std::map<char, int> lightIndex = {
+static const std::map<int, int> lightIndex = {
 	{'#', -100},
 	{' ', -100},
 	{'@', -100},
@@ -98,14 +129,14 @@ static const std::map<char, int> lightIndex = {
 	{'!', 100}
 };
 
-static const std::map<char, int> treetopIndex = {
+static const std::map<int, int> treetopIndex = {
 	{' ', -1},
 	{'#', -1},
 	{'T', 0},
 	{'t', 0}
 };
 
-static const std::map<char, int> bridgeIndex = {
+static const std::map<int, int> bridgeIndex = {
 	{' ', -1},
 	{'#', -1},
 	{'[', 0},

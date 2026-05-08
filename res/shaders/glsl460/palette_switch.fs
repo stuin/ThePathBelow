@@ -1,0 +1,36 @@
+#version 460
+
+const int MAX_INDEXED_COLORS = 8;
+
+// Input fragment attributes (from fragment shader)
+in vec2 fragTexCoord;
+in vec4 fragColor;
+
+// Input uniform values
+uniform sampler2D texture0;
+uniform vec4 colDiffuse;
+
+uniform ivec3 palette[MAX_INDEXED_COLORS];
+
+// Output fragment color
+out vec4 finalColor;
+
+void main()
+{
+    vec4 texelColor = texture(texture0, fragTexCoord)*colDiffuse*fragColor;
+
+    if(texelColor.r==0.0 && texelColor.b==0.0) {
+
+        // Convert the (normalized) texel color RED component (GB would work, too)
+        // to the palette index by scaling up from [0..1] to [0..255]
+        int index = int(texelColor.g*255.0);
+        ivec3 color = palette[index];
+        //color.g = index*50;
+
+        // Calculate final fragment color. Note that the palette color components
+        // are defined in the range [0..255] and need to be normalized to [0..1]
+        finalColor = vec4(color/255.0, texelColor.a);
+    } else {
+        finalColor = texelColor;
+    }
+}

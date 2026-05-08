@@ -1,9 +1,9 @@
 {
 	"lower": {
 		"up": "W",
-		"down": "R",
+		"down": "S",
 		"left": "A",
-		"right": "S"
+		"right": "D"
 	},
 	"upper": {
 		"up": "Up",

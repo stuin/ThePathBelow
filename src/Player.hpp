@@ -1,13 +1,11 @@
-#include "Skyrmion/TileMap.hpp"
+#include "Skyrmion/tiling/TileMap.hpp"
+#include "Skyrmion/input/MovementSystems.h"
 
 class Player : public Node {
 	bool upper;
 	DirectionHandler input;
-	Indexer collisionMap;
+	MapIndexer collisionMap;
 	Player *otherPlayer;
-
-	//End screen stuff
-	sf::Texture endTexture;
 	Node endNode;
 
 	//Dynamic Lighting
@@ -18,10 +16,10 @@ public:
 	int treasure = 0;
 	bool endShown = false;
 
-	Player(bool _upper, Indexer _collisionMap, Player *_otherPlayer=NULL) : 
-		Node(_upper ? UPPERPLAYER : LOWERPLAYER), 
-		input(_upper ? "/upper" : "/lower", INPUT, this), 
-		collisionMap(_collisionMap), endNode(TITLE, sf::Vector2i(64, 32), false, this) {
+	Player(bool _upper, MapIndexer _collisionMap, Player *_otherPlayer=NULL) :
+		Node(_upper ? UPPERPLAYER : LOWERPLAYER),
+		input(_upper ? "/upper" : "/lower", INPUT),
+		collisionMap(_collisionMap), endNode(TITLE, RENDER_TEXTURE_SINGLE, Vector2i(64, 32), this) {
 
 		upper = _upper;
 		otherPlayer = _otherPlayer;
@@ -37,13 +35,13 @@ public:
 	}
 
 	void update(double time) {
-		sf::Vector2f prevPosition = getPosition();
-		sf::Vector2f target = move(input.getDirection(), &collisionMap, time * 32);
+		Vector2f prevPosition = getPosition();
+		setPosition(topDownMovement(this, input.getDirection(), &collisionMap, time * 32));
 
 		//Move player
 		if(!endShown) {
 			if(lightMap != NULL) {
-				sf::Vector2f light = target;
+				Vector2f light = getPosition();
 				//lightMap->setPosition(remainderPosition(target));
 				if(light != prevPosition) {
 					lightMap->moveSource(0, light);
@@ -53,17 +51,13 @@ public:
 
 			//Check for win condition
 			if(getPosition().y < 30 && otherPlayer != NULL && otherPlayer->getPosition().y < 30) {
-				//Load the end texture
-				std::string endFile = "res/endscreen.png";
-				if(!endTexture.loadFromFile(endFile))
-					throw std::invalid_argument("Player texture " + endFile + " not found");
-				endNode.setTexture(endTexture);
+				endNode.setTexture(TEXTURE_END);
 				endNode.setPosition(0, -48);
 				UpdateList::addNode(&endNode);
 
 				std::cout << "YOU WIN!!\n";
 				std::cout << treasure + otherPlayer->treasure << " Treasure chests collected!\n";
-				
+
 				endShown = true;
 				otherPlayer->endShown = true;
 			}
@@ -75,7 +69,7 @@ public:
 		object->setDelete();
 	}
 
-	sf::Vector2f remainderPosition(sf::Vector2f pos) {
-		return sf::Vector2f((int)(pos.x) % 8, (int)(pos.y) % 8);
+	Vector2f remainderPosition(Vector2f pos) {
+		return Vector2f((int)(pos.x) % 8, (int)(pos.y) % 8);
 	}
 };

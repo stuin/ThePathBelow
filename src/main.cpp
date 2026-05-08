@@ -1,96 +1,107 @@
-//SFML headers
-#include <SFML/System.hpp>
-#include <SFML/Graphics.hpp>
+#include "Skyrmion/tiling/LightMap.h"
+#include "Skyrmion/tiling/RandomNoise.hpp"
+#include "Skyrmion/input/InputHandler.h"
+#include "Skyrmion/input/Settings.h"
 
-#include "Skyrmion/LightMap.h"
-#include "Skyrmion/InputHandler.h"
 #include "indexes.h"
 #include "Player.hpp"
 
-int main() {
+void initialize() {
 	//Load settings file
 	Settings::loadSettings("res/settings.json");
-
-	//Load tilemap textures
-	sf::Texture forestTexture;
-	sf::Texture bridgeTexture;
-	sf::Texture treemidTexture;
-	sf::Texture treetopTexture;
-	UpdateList::loadTexture(&forestTexture, "res/foresttiles.png");
-	UpdateList::loadTexture(&bridgeTexture, "res/bridge.png");
-	UpdateList::loadTexture(&treemidTexture, "res/treemid.png");
-	UpdateList::loadTexture(&treetopTexture, "res/treetop.png");
-
 	//Load base tile maps
 	GridMaker grid("res/full_map.txt");
-	TileMap forest(&forestTexture, 16, 16, new Indexer(&grid, displayIndex, 0), MAP);
-	Indexer upperCollisionMap(&grid, upperCollisionIndex, 0, 16, 16);
-	Indexer lowerCollisionMap(&grid, lowerCollisionIndex, 0, 16, 16);
-	Indexer treetopMap(&grid, treetopIndex, -1);
+	TileMap forest(TEXTURE_FOREST, 16, 16, new MapIndexer(&grid, displayIndex, 0), MAP);
+	MapIndexer upperCollisionMap(&grid, upperCollisionIndex, 0, 16, 16);
+	MapIndexer lowerCollisionMap(&grid, lowerCollisionIndex, 0, 16, 16);
+	MapIndexer treetopMap(&grid, treetopIndex, -1);
 	UpdateList::addNode(&forest);
 
 	//Add overlapping bridges
-	TileMap bridges(&bridgeTexture, 16, 16, new Indexer(&grid, bridgeIndex, -1), BRIDGELAYER);
+	TileMap bridges(TEXTURE_BRIDGE, 16, 16, new MapIndexer(&grid, bridgeIndex, -1), BRIDGELAYER);
 	UpdateList::addNode(&bridges);
 
 	//Add overlapping tree middles
-	TileMap treemid(&treemidTexture, 16, 16, &treetopMap, TREES);
+	TileMap treemid(TEXTURE_TREE_MID, 16, 16, &treetopMap, TREES);
 	treemid.setPosition(0, -6);
 	UpdateList::addNode(&treemid);
 
 	//Add overlapping tree tops
-	TileMap treetop(&treetopTexture, 16, 16, &treetopMap, TREES);
+	TileMap treetop(TEXTURE_TREE_TOP, 16, 16, &treetopMap, TREES);
 	treetop.setPosition(0, -22);
 	UpdateList::addNode(&treetop);
 
 	//Setup Light maps
 	int lightScale = Settings::getInt("/lighting_scale");
-	Indexer lightMap(&grid, lightIndex, 0, lightScale, lightScale);
-	LightMapCollection lighting(16, 16, lightMap, LIGHT);
-	LightMap staticLights(16, 16, 0, 0.2, lightMap, LIGHT, true);
-	LightMap movingLights(16, 16, 0, 0.2, lightMap, LIGHT, false);
+	MapIndexer lightMap(&grid, lightIndex, 0, lightScale, lightScale);
+	LinearIndexer lightHalfMap(&lightMap, 0.4, 50, 0, 16, 16);
+	LightMap staticLights(16, 16, 0.0f, 0.2f, &lightMap, LIGHTBUFFERS, true);
+	LightMap movingLights(16, 16, 0, 0.2, &lightMap, LIGHTBUFFERS, false);
+	UpdateList::addNode(&staticLights);
+	UpdateList::addNode(&movingLights);
+
+	//Light map combining
+	LightMapCollection lighting(16, 16, &lightMap, LIGHT, LIGHTBUFFERS);
 	lighting.addLightMap(&staticLights);
 	lighting.addLightMap(&movingLights);
 	UpdateList::addNode(&lighting);
 
-	//Load node textures
-	sf::Texture upperTexture;
-	sf::Texture lowerTexture;
-	sf::Texture treasureTexture;
-	UpdateList::loadTexture(&upperTexture, "res/upperplayer.png");
-	UpdateList::loadTexture(&lowerTexture, "res/lowerplayer.png");
-	UpdateList::loadTexture(&treasureTexture, "res/treasure.png");
+	//Test tile display
+	TileMap lightMapTexture(TEXTURE_LIGHT, 1, 1, &lightHalfMap, LIGHT);
+	lightMapTexture.getRenderComponent(false)->setBlendMode(SK_BLEND_MULT);
+	lightMapTexture.setHidden(true);
+	UpdateList::addNode(&lightMapTexture);
 
 	//Upper area player
 	Player upperPlayer(true, upperCollisionMap);
-	upperPlayer.setPosition(sf::Vector2f(440, 312));
-	upperPlayer.setTexture(upperTexture);
+	upperPlayer.setPosition(Vector2f(440, 312));
+	upperPlayer.setTexture(TEXTURE_PLAYER_UPPER);
 	upperPlayer.setupLighting(&movingLights, &lighting);
 	UpdateList::addNode(&upperPlayer);
 
 	//Lower area player
 	Player lowerPlayer(false, lowerCollisionMap, &upperPlayer);
-	lowerPlayer.setPosition(sf::Vector2f(392, 312));
-	lowerPlayer.setTexture(lowerTexture);
+	lowerPlayer.setPosition(Vector2f(392, 312));
+	lowerPlayer.setTexture(TEXTURE_PLAYER_LOWER);
 	UpdateList::addNode(&lowerPlayer);
 
 	//Place Treasure chests
-	upperCollisionMap.mapGrid([&treasureTexture](char c, sf::Vector2f pos) {
+	upperCollisionMap.mapGrid([](char c, Vector2f pos) {
 		if(c == 'H' || c == 'h') {
-			Node *t = new Node(TREASURE, sf::Vector2i(10, 9));
-			t->setTexture(treasureTexture);
-			t->setPosition(pos + sf::Vector2f(8, 8));
+			Node *t = new Node(TREASURE, RENDER_TEXTURE_SINGLE, Vector2i(10, 9));
+			t->setTexture(TEXTURE_TREASURE);
+			t->setPosition(pos + Vector2f(8, 8));
 			UpdateList::addNode(t);
 		}
 	});
 
 	//Finish engine setup
-	UpdateList::staticLayer(MAP);
-	UpdateList::staticLayer(TREES);
-	UpdateList::staticLayer(INPUT);
-	UpdateList::staticLayer(LIGHT);
-	UpdateList::setCamera(&lowerPlayer, sf::Vector2f(450, 250));
+	UpdateList::globalLayer(MAP);
+	UpdateList::globalLayer(TREES);
+	UpdateList::globalLayer(INPUT);
+	UpdateList::hideLayer(LIGHTBUFFERS);
+	UpdateList::globalLayer(LIGHT);
+	UpdateList::setCamera(&lowerPlayer, Vector2f(450, 250));
 
-	UpdateList::startEngine("The Path Below");
-	return 0;
+	UpdateList::startEngine();
+}
+
+std::string WINDOW_TITLE = "The Path Below";
+std::string *windowTitle() {
+	return &WINDOW_TITLE;
+}
+
+skColor backgroundColor() {
+	return skColor(0,0,0);
+}
+
+std::vector<std::string> &textureFiles() {
+	return TEXTURE_FILES;
+}
+std::vector<std::string> &layerNames() {
+	return LAYER_NAMES;
+}
+
+void recieveNetworkString(std::string data, int code) {
+	std::cout << "NETWORK: Received string " << data << "\n";
 }

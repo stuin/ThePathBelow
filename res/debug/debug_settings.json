@@ -1,0 +1,21 @@
+{
+	"debug": {
+		"layers": {
+			"toggle0": "LCTRL+NUM1",
+			"toggle1": "LCTRL+NUM2",
+			"toggle2": "LCTRL+NUM3",
+			"toggle3": "LCTRL+NUM4",
+			"toggle4": "LCTRL+NUM5",
+			"toggle5": "LCTRL+NUM6",
+			"toggle6": "LCTRL+NUM7",
+			"toggle7": "LCTRL+NUM8",
+			"toggle8": "LCTRL+NUM9",
+			"toggle9": "LCTRL+NUM0"
+		},
+		"breakpoints": {
+			"pause": "F1",
+			"resume": "SPACE",
+			"nextframe": "TAB"
+		}
+	}
+}
